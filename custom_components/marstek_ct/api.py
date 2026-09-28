@@ -21,7 +21,15 @@ class MarstekCtApi:
     def _build_payload(self):
         """Builds the UDP payload for the query."""
         SOH, STX, ETX, SEPARATOR = 0x01, 0x02, 0x03, '|'
-        message_fields = [self._device_type, self._battery_mac, self._ct_type, self._ct_mac, '0', '0']
+        message_fields = [
+            self._device_type,
+            self._battery_mac,
+            self._ct_type,
+            self._ct_mac,
+            '0',  # unassigned/inspection phase
+            '0',  # monitor reports no battery power
+            '0',  # UDP protocol v4: do not participate in aggregation
+        ]
         message_bytes = (SEPARATOR + SEPARATOR.join(message_fields)).encode('ascii')
         base_size = 1 + 1 + len(message_bytes) + 1 + 2
         total_length = base_size + len(str(base_size + 2))
